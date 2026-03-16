@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에듀케레 분석지 — Who Is Your Role Model?</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-light: #243460;
+    --gold: #c8a84b;
+    --gold-light: #e2c97e;
+    --cream: #faf8f3;
+    --white: #ffffff;
+    --gray: #f0eee8;
+    --text: #1a1a2e;
+    --text-muted: #5a5a7a;
+    --green: #2d7a4f;
+    --red: #b33030;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .app-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+    border-bottom: 3px solid var(--gold);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .brand { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold); letter-spacing: 1px; }
+  .doc-title { font-size: 0.8rem; color: #aab0c8; letter-spacing: 0.5px; }
+
+  /* TABS */
+  .tab-bar {
+    background: var(--navy-light);
+    display: flex; overflow-x: auto;
+    border-bottom: 2px solid var(--gold);
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 0.75rem 1.4rem;
+    color: #aab0c8; font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+    border: none; background: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .tab-btn:hover { color: var(--gold-light); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(200,168,75,0.08); }
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--navy); font-size: 1.5rem;
+    border-left: 4px solid var(--gold);
+    padding-left: 1rem; margin-bottom: 1.5rem;
+  }
+  .sub-title { font-size: 1rem; font-weight: 700; color: var(--gold); margin: 2rem 0 0.8rem; }
+
+  /* 전문 */
+  .passage-box {
+    background: var(--white); border: 2px solid var(--navy);
+    border-radius: var(--radius); padding: 2rem;
+    font-family: 'EB Garamond', serif; font-size: 1.05rem; line-height: 1.9; color: #1a1a2e;
+  }
+  .passage-box p { margin-bottom: 1rem; }
+  .person-label {
+    display: inline-block; background: var(--navy); color: var(--gold);
+    font-size: 0.75rem; font-family: 'Noto Sans KR', sans-serif; font-weight: 700;
+    padding: 0.25rem 0.75rem; border-radius: 4px; margin: 1rem 0 0.6rem;
+    letter-spacing: 0.5px;
+  }
+
+  /* 문장분석 */
+  .sentence-card {
+    background: var(--white); border: 1px solid #ddd;
+    border-radius: var(--radius); margin-bottom: 1.2rem; overflow: hidden;
+  }
+  .sentence-header {
+    background: var(--navy); color: var(--white);
+    padding: 0.6rem 1rem; display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+  .s-num {
+    background: var(--gold); color: var(--navy); font-weight: 700; font-size: 0.8rem;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+  }
+  .s-eng { font-family: 'EB Garamond', serif; font-size: 1rem; line-height: 1.6; }
+  .sentence-body { padding: 1rem; }
+  .slash-reading {
+    font-family: 'EB Garamond', serif; font-size: 0.95rem; color: #444;
+    background: var(--gray); padding: 0.6rem 0.8rem; border-radius: 6px;
+    margin-bottom: 0.8rem; line-height: 1.7;
+  }
+  .slash { color: var(--gold); font-weight: 700; margin: 0 2px; }
+  .korean-trans { font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin-bottom: 0.8rem; }
+  .grammar-list { list-style: none; }
+  .grammar-list li {
+    font-size: 0.85rem; padding: 0.4rem 0;
+    border-bottom: 1px dashed #eee; display: flex; gap: 0.5rem;
+  }
+  .grammar-list li:last-child { border-bottom: none; }
+  .g-tag {
+    background: var(--navy); color: var(--gold); font-size: 0.72rem;
+    padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 700;
+    white-space: nowrap; height: fit-content; margin-top: 1px; flex-shrink: 0;
+  }
+
+  /* 핵심단어 */
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+  .vocab-card {
+    background: var(--white); border: 1px solid #ddd;
+    border-radius: var(--radius); padding: 1rem; border-left: 4px solid var(--gold);
+  }
+  .vocab-word { font-family: 'EB Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--navy); }
+  .vocab-pos { font-size: 0.72rem; color: var(--gold); font-weight: 700; margin-left: 0.4rem; text-transform: uppercase; }
+  .vocab-meaning { font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem; }
+  .vocab-example {
+    font-family: 'EB Garamond', serif; font-size: 0.88rem; color: #555; font-style: italic;
+    margin-top: 0.4rem; border-top: 1px dashed #eee; padding-top: 0.4rem;
+  }
+
+  /* 내용·주제 */
+  .info-box {
+    background: var(--white); border: 1px solid #ddd;
+    border-radius: var(--radius); padding: 1.2rem 1.5rem; margin-bottom: 1rem;
+  }
+  .info-box .label { font-size: 0.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; }
+  .info-box .value { font-size: 0.95rem; line-height: 1.7; color: var(--text); }
+  .person-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 0.5rem; }
+  .person-card {
+    background: var(--gray); border-radius: 8px; padding: 1rem;
+    border-top: 3px solid var(--gold);
+  }
+  .person-card .pname { font-weight: 700; color: var(--navy); margin-bottom: 0.3rem; }
+  .person-card .pdetail { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+  .flow-steps { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+  .flow-step { display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.9rem; }
+  .flow-arrow { color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+  /* 퀴즈 */
+  .quiz-card {
+    background: var(--white); border: 1px solid #ddd;
+    border-radius: var(--radius); padding: 1.3rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .quiz-q { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; line-height: 1.6; }
+  .quiz-q .q-type {
+    display: inline-block; background: var(--navy); color: var(--gold);
+    font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 3px; margin-right: 0.5rem; font-weight: 700;
+  }
+  .options { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .option-btn {
+    background: var(--gray); border: 2px solid transparent; border-radius: 6px;
+    padding: 0.6rem 1rem; cursor: pointer; font-size: 0.88rem; text-align: left;
+    font-family: 'Noto Sans KR', sans-serif; transition: all 0.15s; line-height: 1.5;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--navy); background: #e8e6e0; }
+  .option-btn.correct { background: #e6f4ec; border-color: var(--green); color: var(--green); font-weight: 700; }
+  .option-btn.wrong { background: #fce8e8; border-color: var(--red); color: var(--red); }
+  .option-btn.revealed { background: #e6f4ec; border-color: var(--green); color: var(--green); font-weight: 700; }
+  .option-btn:disabled { cursor: default; }
+  .quiz-explanation {
+    display: none; margin-top: 0.8rem; padding: 0.7rem 1rem;
+    background: #f0f4fa; border-left: 3px solid var(--navy); border-radius: 4px;
+    font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;
+  }
+  .reset-btn {
+    margin-top: 0.8rem; background: none; border: 1px solid #ccc; border-radius: 4px;
+    padding: 0.3rem 0.8rem; cursor: pointer; font-size: 0.78rem; color: var(--text-muted);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .reset-btn:hover { border-color: var(--navy); color: var(--navy); }
+
+  /* 서술형 */
+  .descriptive-card {
+    background: var(--white); border: 1px solid #ddd;
+    border-radius: var(--radius); padding: 1.3rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .desc-q { font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.7rem; line-height: 1.6; }
+  .desc-condition {
+    font-size: 0.82rem; color: var(--text-muted); background: var(--gray);
+    padding: 0.4rem 0.8rem; border-radius: 4px; margin-bottom: 0.8rem;
+  }
+  .answer-toggle-btn {
+    background: var(--navy); color: var(--gold); border: none; border-radius: 6px;
+    padding: 0.5rem 1.2rem; cursor: pointer; font-size: 0.82rem; font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif; transition: background 0.15s;
+  }
+  .answer-toggle-btn:hover { background: var(--navy-light); }
+  .model-answer {
+    display: none; margin-top: 0.8rem; padding: 0.8rem 1rem;
+    background: #f0f4fa; border-left: 3px solid var(--gold); border-radius: 4px;
+    font-size: 0.88rem; line-height: 1.7; color: var(--text);
+  }
+
+  .app-footer { text-align: center; padding: 2rem; color: #aaa; font-size: 0.78rem; border-top: 1px solid #ddd; margin-top: 3rem; }
+
+  @media (max-width: 600px) {
+    .app-header { padding: 0 1rem; }
+    .content { padding: 1.2rem 1rem; }
+    .vocab-grid, .person-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <span class="brand">에듀케레 Educare</span>
+  <span class="doc-title">고2 내신 · Who Is Your Role Model?</span>
+</header>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('전문')">① 전문</button>
+  <button class="tab-btn" onclick="showTab('문장분석')">② 문장분석</button>
+  <button class="tab-btn" onclick="showTab('핵심단어')">③ 핵심단어·표현</button>
+  <button class="tab-btn" onclick="showTab('주제')">④ 내용·주제·요지</button>
+  <button class="tab-btn" onclick="showTab('퀴즈')">⑤ 변형문제 (객관식)</button>
+  <button class="tab-btn" onclick="showTab('서술형')">⑥ 서술형·영작</button>
+</nav>
+
+<main class="content">
+
+<!-- ① 전문 -->
+<section id="전문" class="section active">
+  <h2 class="section-title">전문 (Full Passage)</h2>
+  <div class="passage-box">
+    <p>Choosing a career is one of the biggest life decisions young people face. Mapping out the right career path can be demanding. While some teenagers have a clear vision of their career goals, others struggle to define them. This is where role models can be useful. They help young people start to plan their careers by providing them with guidance and the sense of purpose they need to succeed. We asked our teenage readers about their role models and the qualities they admire most in them. After you read each student's story, you will get a better idea of the profound impact role models can have when it comes to shaping career goals.</p>
+
+    <div class="person-label">Minji — Role Model: Jacques Cousteau</div>
+    <p>My role model is Jacques Cousteau, a French ocean explorer, inventor, and filmmaker. He dedicated his life to exploring and documenting the wonders of the underwater world. As a young man, he dreamed of becoming a pilot, but then he broke both of his arms in a terrible car accident. As part of his physical therapy, Cousteau began swimming. He became intrigued by the mysteries of the ocean, and he wanted to explore further. However, the diving equipment available at that time was insufficient. Instead of giving up, Cousteau decided to create his own equipment. After a long series of failed attempts, he finally succeeded in developing a portable breathing device, which he called the "Aqua-Lung." Cousteau shared his underwater experiences with the world in a compelling documentary film released in 1956. It transformed people's perceptions of the ocean and promoted the need for marine conservation.</p>
+    <p>Cousteau's curiosity drove him to constantly challenge himself in new areas, and his passion enabled him to make the impossible a reality. Cousteau's life story inspired me to push the boundaries of what I can do. Because of him, I am not afraid to try different things in life. I will keep exploring until I find what suits me best.</p>
+
+    <div class="person-label">Sunho — Role Model: Joan Procter</div>
+    <p>When people ask me about my role model, I always say that it is Joan Procter. You may not have heard of her, but she was a notable zoologist who specialized in reptiles in the early 20th century. She taught me that devotion to a particular field is important for shaping one's career. During her childhood, Procter immersed herself in the exploration of nature and animals. Although her father hated reptiles, she kept lizards, snakes, and even a baby crocodile as pets. They were special companions that she loved and took care of. She was a brilliant student, but health problems prevented her from attending university. However, her passion for zoology was so strong that it kept her moving forward, and she continued her studies on her own.</p>
+    <p>Procter accumulated extensive knowledge of zoology. She began exchanging letters with George Boulenger, a prominent expert on reptiles, in order to share ideas. He was so impressed that he hired her as his assistant at the British Museum. A few years later, she became the first female curator of reptiles at the London Zoo. There, she actively contributed to the design of the Reptile House by incorporating new technology that allowed for better care and breeding of wild animals. Like her, I want to dedicate myself to a field that I have a passion for. For this reason, I will take my time to think deeply about where my true interests lie. If I am fortunate, one of my passions might someday lead to a rewarding career.</p>
+
+    <div class="person-label">Yubin — Role Model: Kim Sang-jin</div>
+    <p>As someone who loves animation, my role model has always been Kim Sang-jin. He was the first Korean animator to work for Walt Disney Animation Studios. Beyond the fact that he worked for a world-famous company, I admire him for pursuing his dream despite the difficulties he faced. From a young age, Kim was enthusiastic about drawing. However, his dream of studying art in college was disrupted when he was diagnosed with color vision deficiency during high school. Surprisingly, he didn't allow this misfortune to discourage him. Instead, he simply viewed his condition as a minor issue that could happen to anyone.</p>
+    <p>Although he graduated with a degree in economics, he searched for a job related to art that wouldn't involve working with colors. He found out that some animators work only in pencil, so he sent his portfolio to all the animation studios in Korea. One of them gave him an opportunity, and he was finally able to start his career. It was his hard work and talent that eventually led him to a position at Disney at the age of 37. I give him a lot of credit for his persistence and his attitude toward the challenges in his life. I'll never give up on my dreams. If I encounter difficulties, I will simply find another way to pursue them, just as he did.</p>
+
+    <p>These stories shared by our readers emphasize the importance of role models in guiding teenagers toward their career goals. Role models, regardless of their field, inspire us because they possess qualities like persistence, commitment, and optimism. If you haven't found a role model yet, perhaps it's time to start searching for one. Try to find someone who can encourage you to take the first step in your career exploration.</p>
+  </div>
+</section>
+
+<!-- ② 문장분석 -->
+<section id="문장분석" class="section">
+  <h2 class="section-title">문장분석 (Sentence Analysis)</h2>
+
+  <p class="sub-title">[ 도입부 ]</p>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">1</span><span class="s-eng">Choosing a career is one of the biggest life decisions young people face.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Choosing a career <span class="slash">/</span> is one of the biggest life decisions <span class="slash">/</span> young people face.</div>
+      <div class="korean-trans">직업을 선택하는 것은 젊은이들이 직면하는 가장 큰 인생의 결정들 중 하나이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">동명사 주어</span> Choosing a career: 동명사구가 문장 주어. 단수 취급 → is.</li>
+        <li><span class="g-tag">one of the+최상급+복수명사</span> one of the biggest decisions: 「가장 ~한 것들 중 하나」. 뒤에 복수명사 필수.</li>
+        <li><span class="g-tag">관계대명사 생략</span> decisions (that/which) young people face: 목적격 관계대명사 생략.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">2</span><span class="s-eng">Mapping out the right career path can be demanding.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Mapping out the right career path <span class="slash">/</span> can be demanding.</div>
+      <div class="korean-trans">올바른 진로를 구체적으로 계획하는 것은 힘들 수 있다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">동명사 주어</span> Mapping out the right career path: 구동사 map out의 동명사형이 주어.</li>
+        <li><span class="g-tag">조동사</span> can be: 일반적 가능성을 나타내는 can.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">3</span><span class="s-eng">While some teenagers have a clear vision of their career goals, others struggle to define them.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">While some teenagers have a clear vision of their career goals, <span class="slash">/</span> others struggle to define them.</div>
+      <div class="korean-trans">일부 십대들은 진로 목표에 대한 뚜렷한 비전을 가지고 있는 반면, 다른 이들은 그것을 정의하는 데 어려움을 겪는다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">대조 접속사</span> While: 「~인 반면에」 대조·양보의 의미.</li>
+        <li><span class="g-tag">some ~ others</span> some … others ~: 「일부는 ~, 다른 일부는 ~」의 대조 표현.</li>
+        <li><span class="g-tag">struggle to-V</span> struggle to define: ~하려고 애쓰다. to부정사를 목적어로 취함.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">4</span><span class="s-eng">This is where role models can be useful.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">This is <span class="slash">/</span> where role models can be useful.</div>
+      <div class="korean-trans">바로 이 지점이 롤 모델이 유용할 수 있는 곳이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">관계부사 where</span> This is where ~: 선행사(the point/situation)가 생략된 관계부사절이 보어로 사용.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">5</span><span class="s-eng">They help young people start to plan their careers by providing them with guidance and the sense of purpose they need to succeed.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">They help young people start to plan their careers <span class="slash">/</span> by providing them with guidance <span class="slash">/</span> and the sense of purpose <span class="slash">/</span> they need to succeed.</div>
+      <div class="korean-trans">그들은 성공에 필요한 지침과 목적의식을 제공함으로써 젊은이들이 진로를 계획하기 시작하도록 돕는다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">준사역동사</span> help + O + (to) V: help young people (to) start. to 생략 가능.</li>
+        <li><span class="g-tag">전치사+동명사</span> by providing: 수단·방법을 나타내는 by -ing.</li>
+        <li><span class="g-tag">provide A with B</span> provide them with guidance: A에게 B를 제공하다.</li>
+        <li><span class="g-tag">관계대명사 생략</span> the sense of purpose (that) they need: 목적격 관계대명사 생략.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">6</span><span class="s-eng">We asked our teenage readers about their role models and the qualities they admire most in them.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">We asked our teenage readers <span class="slash">/</span> about their role models <span class="slash">/</span> and the qualities <span class="slash">/</span> they admire most in them.</div>
+      <div class="korean-trans">우리는 십대 독자들에게 그들의 롤 모델과 그들이 롤 모델에서 가장 존경하는 자질에 대해 물었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">관계대명사 생략</span> the qualities (that) they admire most: 목적격 관계대명사 생략.</li>
+        <li><span class="g-tag">병렬구조</span> about their role models and the qualities: 전치사 about의 목적어 두 개가 and로 병렬.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">7</span><span class="s-eng">After you read each student's story, you will get a better idea of the profound impact role models can have when it comes to shaping career goals.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">After you read each student's story, <span class="slash">/</span> you will get a better idea <span class="slash">/</span> of the profound impact <span class="slash">/</span> role models can have <span class="slash">/</span> when it comes to shaping career goals.</div>
+      <div class="korean-trans">각 학생의 이야기를 읽고 나면, 롤 모델이 진로 목표를 형성하는 데 있어 미칠 수 있는 심오한 영향에 대해 더 잘 이해하게 될 것이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">관계대명사 생략</span> the profound impact (that) role models can have: 목적격 관계대명사 생략.</li>
+        <li><span class="g-tag">관용표현</span> when it comes to -ing: ~에 관해서라면, ~할 때. to는 전치사 → 동명사.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="sub-title">[ Minji — Jacques Cousteau ]</p>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">8</span><span class="s-eng">My role model is Jacques Cousteau, a French ocean explorer, inventor, and filmmaker.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">My role model is Jacques Cousteau, <span class="slash">/</span> a French ocean explorer, inventor, and filmmaker.</div>
+      <div class="korean-trans">나의 롤 모델은 프랑스의 해양 탐험가, 발명가, 영화 제작자인 Jacques Cousteau이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">동격</span> a French ocean explorer, inventor, and filmmaker: 주어 Jacques Cousteau를 부연 설명하는 동격 명사구.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">9</span><span class="s-eng">He dedicated his life to exploring and documenting the wonders of the underwater world.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">He dedicated his life <span class="slash">/</span> to exploring and documenting <span class="slash">/</span> the wonders of the underwater world.</div>
+      <div class="korean-trans">그는 수중 세계의 경이로움을 탐험하고 기록하는 데 자신의 삶을 바쳤다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">dedicate A to B</span> dedicate his life to -ing: A를 B에 헌신하다. to는 전치사 → 동명사.</li>
+        <li><span class="g-tag">병렬구조</span> exploring and documenting: 전치사 to의 목적어 두 동명사가 and로 병렬.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">10</span><span class="s-eng">As a young man, he dreamed of becoming a pilot, but then he broke both of his arms in a terrible car accident.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">As a young man, <span class="slash">/</span> he dreamed of becoming a pilot, <span class="slash">/</span> but then he broke both of his arms <span class="slash">/</span> in a terrible car accident.</div>
+      <div class="korean-trans">젊었을 때 그는 조종사가 되는 꿈을 꾸었지만, 그후 끔찍한 자동차 사고로 두 팔을 모두 부러뜨렸다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">전치사+동명사</span> dream of becoming: dream of -ing: ~하는 것을 꿈꾸다. of는 전치사.</li>
+        <li><span class="g-tag">both of</span> both of his arms: 「둘 다」. both 뒤에 복수명사.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">11</span><span class="s-eng">As part of his physical therapy, Cousteau began swimming.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">As part of his physical therapy, <span class="slash">/</span> Cousteau began swimming.</div>
+      <div class="korean-trans">물리 치료의 일환으로, Cousteau는 수영을 시작했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">begin -ing</span> began swimming: begin은 동명사·to부정사 모두 목적어 가능. 의미 차이 없음.</li>
+        <li><span class="g-tag">전치사구</span> As part of: ~의 일부로서, ~의 일환으로.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">12</span><span class="s-eng">He became intrigued by the mysteries of the ocean, and he wanted to explore further.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">He became intrigued by the mysteries of the ocean, <span class="slash">/</span> and he wanted to explore further.</div>
+      <div class="korean-trans">그는 바다의 신비에 매료되었고, 더 탐험하고 싶어졌다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">become + 형용사</span> became intrigued: intrigued는 과거분사형 형용사(수동 의미: 매료된).</li>
+        <li><span class="g-tag">be intrigued by</span> intrigued by the mysteries: ~에 매혹되다, 흥미를 갖다. by는 원인.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">13</span><span class="s-eng">However, the diving equipment available at that time was insufficient.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">However, the diving equipment <span class="slash">/</span> available at that time <span class="slash">/</span> was insufficient.</div>
+      <div class="korean-trans">그러나 당시에 이용 가능한 잠수 장비는 불충분했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">후치수식(형용사구)</span> available at that time: 명사 equipment를 뒤에서 수식하는 형용사구.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">14</span><span class="s-eng">Instead of giving up, Cousteau decided to create his own equipment.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Instead of giving up, <span class="slash">/</span> Cousteau decided to create his own equipment.</div>
+      <div class="korean-trans">포기하는 대신, Cousteau는 자신만의 장비를 만들기로 결심했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">전치사+동명사</span> Instead of giving up: 전치사 of의 목적어로 동명사. instead of: ~하는 대신에.</li>
+        <li><span class="g-tag">decide to-V</span> decided to create: ~하기로 결심하다. decide는 to부정사만 목적어로 취함.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">15</span><span class="s-eng">After a long series of failed attempts, he finally succeeded in developing a portable breathing device, which he called the "Aqua-Lung."</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">After a long series of failed attempts, <span class="slash">/</span> he finally succeeded in developing <span class="slash">/</span> a portable breathing device, <span class="slash">/</span> which he called the "Aqua-Lung."</div>
+      <div class="korean-trans">오랜 일련의 실패한 시도 끝에, 그는 마침내 휴대용 호흡 장치를 개발하는 데 성공했는데, 그는 그것을 "Aqua-Lung"이라고 불렀다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">succeed in -ing</span> succeeded in developing: ~하는 데 성공하다. in은 전치사 → 동명사.</li>
+        <li><span class="g-tag">계속적 용법 관계대명사</span> , which he called ~: 선행사 device를 부연 설명. 콤마+which는 and it으로 바꿀 수 있음.</li>
+        <li><span class="g-tag">5형식(call)</span> call + O + OC: 목적어를 ~라고 부르다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">16</span><span class="s-eng">Cousteau shared his underwater experiences with the world in a compelling documentary film released in 1956.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Cousteau shared his underwater experiences with the world <span class="slash">/</span> in a compelling documentary film <span class="slash">/</span> released in 1956.</div>
+      <div class="korean-trans">Cousteau는 1956년에 공개된 매력적인 다큐멘터리 영화를 통해 자신의 수중 경험을 세상과 공유했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">share A with B</span> share his experiences with the world: A를 B와 공유하다.</li>
+        <li><span class="g-tag">후치수식(과거분사)</span> released in 1956: 명사 film을 뒤에서 수식하는 과거분사구(수동).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">17</span><span class="s-eng">It transformed people's perceptions of the ocean and promoted the need for marine conservation.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">It transformed people's perceptions of the ocean <span class="slash">/</span> and promoted the need for marine conservation.</div>
+      <div class="korean-trans">그것은 바다에 대한 사람들의 인식을 변화시켰고 해양 보존의 필요성을 촉진했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">병렬구조</span> transformed … and promoted: 두 동사가 등위접속사 and로 연결된 병렬 구조.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">18</span><span class="s-eng">Cousteau's curiosity drove him to constantly challenge himself in new areas, and his passion enabled him to make the impossible a reality.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Cousteau's curiosity drove him <span class="slash">/</span> to constantly challenge himself in new areas, <span class="slash">/</span> and his passion enabled him <span class="slash">/</span> to make the impossible a reality.</div>
+      <div class="korean-trans">Cousteau의 호기심은 그가 새로운 분야에서 끊임없이 자신에게 도전하도록 이끌었고, 그의 열정은 불가능을 현실로 만들 수 있게 했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">5형식(drive)</span> drive + O + to-V: O가 ~하도록 이끌다/몰아붙이다.</li>
+        <li><span class="g-tag">5형식(enable)</span> enable + O + to-V: O가 ~할 수 있게 하다.</li>
+        <li><span class="g-tag">5형식(make)</span> make the impossible a reality: make + O + OC. the impossible = 형용사의 명사화(불가능한 것).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">19</span><span class="s-eng">Cousteau's life story inspired me to push the boundaries of what I can do.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Cousteau's life story inspired me <span class="slash">/</span> to push the boundaries <span class="slash">/</span> of what I can do.</div>
+      <div class="korean-trans">Cousteau의 삶의 이야기는 내가 할 수 있는 것의 경계를 넓히도록 나에게 영감을 주었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">5형식(inspire)</span> inspire + O + to-V: O가 ~하도록 영감을 주다.</li>
+        <li><span class="g-tag">관계대명사 what</span> what I can do: 선행사 포함 관계대명사. of의 목적어절(= the things that I can do).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">20</span><span class="s-eng">Because of him, I am not afraid to try different things in life.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Because of him, <span class="slash">/</span> I am not afraid <span class="slash">/</span> to try different things in life.</div>
+      <div class="korean-trans">그 덕분에, 나는 삶에서 다양한 것들을 시도하는 것을 두려워하지 않는다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">because of</span> Because of him: 이유를 나타내는 전치사구(= Thanks to him). 뒤에 명사(구).</li>
+        <li><span class="g-tag">형용사적 to부정사</span> not afraid to try: afraid를 수식하는 to부정사(감정 형용사 + to-V).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">21</span><span class="s-eng">I will keep exploring until I find what suits me best.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">I will keep exploring <span class="slash">/</span> until I find <span class="slash">/</span> what suits me best.</div>
+      <div class="korean-trans">나는 내게 가장 잘 맞는 것을 찾을 때까지 계속 탐색할 것이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">keep -ing</span> keep exploring: 계속 ~하다(지속).</li>
+        <li><span class="g-tag">시간 부사절</span> until I find ~: ~할 때까지. 시간 부사절에서는 현재시제가 미래 대신 사용.</li>
+        <li><span class="g-tag">관계대명사 what</span> what suits me best: find의 목적어절(= the thing that suits me best).</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="sub-title">[ Sunho — Joan Procter ]</p>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">22</span><span class="s-eng">When people ask me about my role model, I always say that it is Joan Procter.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">When people ask me about my role model, <span class="slash">/</span> I always say <span class="slash">/</span> that it is Joan Procter.</div>
+      <div class="korean-trans">사람들이 내 롤 모델에 대해 물으면, 나는 항상 Joan Procter라고 말한다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">that절(목적어)</span> say that ~: 동사 say의 목적어로 쓰인 명사절.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">23</span><span class="s-eng">You may not have heard of her, but she was a notable zoologist who specialized in reptiles in the early 20th century.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">You may not have heard of her, <span class="slash">/</span> but she was a notable zoologist <span class="slash">/</span> who specialized in reptiles <span class="slash">/</span> in the early 20th century.</div>
+      <div class="korean-trans">여러분은 그녀에 대해 들어본 적이 없을지도 모르지만, 그녀는 20세기 초 파충류를 전문으로 한 저명한 동물학자였다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">may have p.p.</span> may not have heard: 과거에 대한 추측(~하지 않았을지도 모른다).</li>
+        <li><span class="g-tag">주격 관계대명사</span> who specialized in reptiles: 선행사 zoologist를 수식.</li>
+        <li><span class="g-tag">specialize in</span> specialized in reptiles: ~을 전문으로 하다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">24</span><span class="s-eng">She taught me that devotion to a particular field is important for shaping one's career.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">She taught me <span class="slash">/</span> that devotion to a particular field <span class="slash">/</span> is important for shaping one's career.</div>
+      <div class="korean-trans">그녀는 나에게 특정 분야에 대한 헌신이 진로를 형성하는 데 중요하다는 것을 가르쳐주었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">4형식→that절</span> teach + IO + that절: 4형식 동사 teach의 직접목적어로 that절 사용.</li>
+        <li><span class="g-tag">전치사+동명사</span> for shaping one's career: 전치사 for의 목적어로 동명사.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">25</span><span class="s-eng">During her childhood, Procter immersed herself in the exploration of nature and animals.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">During her childhood, <span class="slash">/</span> Procter immersed herself <span class="slash">/</span> in the exploration of nature and animals.</div>
+      <div class="korean-trans">어린 시절, Procter는 자연과 동물 탐구에 몰두했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">재귀대명사</span> immerse herself: 주어(Procter)와 동일 대상. immerse oneself in ~: ~에 몰두하다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">26</span><span class="s-eng">Although her father hated reptiles, she kept lizards, snakes, and even a baby crocodile as pets.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Although her father hated reptiles, <span class="slash">/</span> she kept lizards, snakes, and even a baby crocodile <span class="slash">/</span> as pets.</div>
+      <div class="korean-trans">아버지가 파충류를 싫어했음에도 불구하고, 그녀는 도마뱀, 뱀, 심지어 아기 악어까지 애완동물로 키웠다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">양보 접속사</span> Although: ~임에도 불구하고(사실적 양보).</li>
+        <li><span class="g-tag">강조 부사</span> even: 예상 밖의 대상을 강조(심지어 ~까지).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">27</span><span class="s-eng">They were special companions that she loved and took care of.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">They were special companions <span class="slash">/</span> that she loved and took care of.</div>
+      <div class="korean-trans">그것들은 그녀가 사랑하고 돌봤던 특별한 동반자들이었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">관계대명사</span> that she loved and took care of: 선행사 companions를 수식하는 목적격 관계대명사. 전치사 of가 관계절 끝에 위치.</li>
+        <li><span class="g-tag">구동사</span> take care of: ~을 돌보다(= look after).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">28</span><span class="s-eng">She was a brilliant student, but health problems prevented her from attending university.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">She was a brilliant student, <span class="slash">/</span> but health problems prevented her <span class="slash">/</span> from attending university.</div>
+      <div class="korean-trans">그녀는 뛰어난 학생이었지만, 건강 문제로 인해 대학에 다니지 못했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">prevent A from -ing</span> prevented her from attending: A가 ~하지 못하게 막다. from 뒤 동명사 필수.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">29</span><span class="s-eng">However, her passion for zoology was so strong that it kept her moving forward, and she continued her studies on her own.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">However, her passion for zoology was so strong <span class="slash">/</span> that it kept her moving forward, <span class="slash">/</span> and she continued her studies on her own.</div>
+      <div class="korean-trans">그러나 동물학에 대한 그녀의 열정이 너무 강해서 그것이 그녀를 계속 앞으로 나아가게 했고, 그녀는 스스로 공부를 계속했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">so ~ that</span> so strong that ~: 「너무 ~해서 …하다」결과를 나타내는 구문.</li>
+        <li><span class="g-tag">keep + O + -ing</span> kept her moving forward: O가 계속 ~하게 하다(유지 사역).</li>
+        <li><span class="g-tag">관용표현</span> on her own: 혼자서, 스스로(= by herself).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">30</span><span class="s-eng">Procter accumulated extensive knowledge of zoology.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Procter accumulated <span class="slash">/</span> extensive knowledge of zoology.</div>
+      <div class="korean-trans">Procter는 동물학에 대한 광범위한 지식을 축적했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">타동사</span> accumulated: 쌓다, 축적하다. extensive(광범위한)와 함께 대량 지식 강조.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">31</span><span class="s-eng">She began exchanging letters with George Boulenger, a prominent expert on reptiles, in order to share ideas.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">She began exchanging letters <span class="slash">/</span> with George Boulenger, <span class="slash">/</span> a prominent expert on reptiles, <span class="slash">/</span> in order to share ideas.</div>
+      <div class="korean-trans">그녀는 파충류 분야의 저명한 전문가인 George Boulenger와 아이디어를 나누기 위해 편지를 교환하기 시작했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">동격</span> a prominent expert on reptiles: George Boulenger를 설명하는 동격 명사구.</li>
+        <li><span class="g-tag">목적 to부정사</span> in order to share ideas: ~하기 위하여. in order to는 to보다 목적 의미를 강조.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">32</span><span class="s-eng">He was so impressed that he hired her as his assistant at the British Museum.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">He was so impressed <span class="slash">/</span> that he hired her as his assistant <span class="slash">/</span> at the British Museum.</div>
+      <div class="korean-trans">그는 너무 감명 받아서 그녀를 대영 박물관에서 자신의 조수로 고용했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">so ~ that</span> so impressed that ~: 결과 구문. impressed는 과거분사형 형용사.</li>
+        <li><span class="g-tag">5형식(hire)</span> hire + O + as + OC: O를 ~로서 고용하다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">33</span><span class="s-eng">A few years later, she became the first female curator of reptiles at the London Zoo.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">A few years later, <span class="slash">/</span> she became the first female curator of reptiles <span class="slash">/</span> at the London Zoo.</div>
+      <div class="korean-trans">몇 년 후, 그녀는 런던 동물원의 최초 여성 파충류 큐레이터가 되었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">서수 강조</span> the first female curator: the + 서수 + 형용사 + 명사. 「최초의 여성 ~」.</li>
+        <li><span class="g-tag">2형식(become)</span> became the first female curator: become + 명사(주격보어).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">34</span><span class="s-eng">There, she actively contributed to the design of the Reptile House by incorporating new technology that allowed for better care and breeding of wild animals.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">There, she actively contributed to the design of the Reptile House <span class="slash">/</span> by incorporating new technology <span class="slash">/</span> that allowed for better care and breeding of wild animals.</div>
+      <div class="korean-trans">그곳에서, 그녀는 야생동물의 더 나은 보살핌과 번식을 가능하게 하는 신기술을 도입함으로써 파충류관 설계에 적극적으로 기여했다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">contribute to</span> contributed to the design: ~에 기여하다. to는 전치사.</li>
+        <li><span class="g-tag">전치사+동명사</span> by incorporating: 수단을 나타내는 by -ing.</li>
+        <li><span class="g-tag">주격 관계대명사</span> that allowed for better care: 선행사 technology를 수식.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">35</span><span class="s-eng">Like her, I want to dedicate myself to a field that I have a passion for.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Like her, <span class="slash">/</span> I want to dedicate myself <span class="slash">/</span> to a field <span class="slash">/</span> that I have a passion for.</div>
+      <div class="korean-trans">그녀처럼, 나는 내가 열정을 가진 분야에 나 자신을 헌신하고 싶다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">dedicate oneself to</span> dedicate myself to a field: 자신을 ~에 헌신하다. to는 전치사.</li>
+        <li><span class="g-tag">관계대명사</span> a field that I have a passion for: 전치사 for가 관계절 끝에 위치(= for which I have a passion).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">36</span><span class="s-eng">For this reason, I will take my time to think deeply about where my true interests lie.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">For this reason, <span class="slash">/</span> I will take my time <span class="slash">/</span> to think deeply <span class="slash">/</span> about where my true interests lie.</div>
+      <div class="korean-trans">이런 이유로, 나는 내 진정한 관심사가 어디에 있는지 깊이 생각하는 데 시간을 들일 것이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">관용표현</span> take one's time: 서두르지 않고 시간을 들이다.</li>
+        <li><span class="g-tag">간접의문문</span> about where my true interests lie: 전치사 about의 목적어로 쓰인 간접의문문(where + S + V).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">37</span><span class="s-eng">If I am fortunate, one of my passions might someday lead to a rewarding career.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">If I am fortunate, <span class="slash">/</span> one of my passions <span class="slash">/</span> might someday lead to a rewarding career.</div>
+      <div class="korean-trans">운이 좋다면, 나의 열정 중 하나가 언젠가 보람 있는 직업으로 이어질지도 모른다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">조건절(직설법)</span> If I am fortunate: 실현 가능한 조건. 현재시제 사용.</li>
+        <li><span class="g-tag">조동사</span> might someday lead: 불확실한 미래 가능성을 나타내는 might.</li>
+        <li><span class="g-tag">lead to</span> lead to a rewarding career: ~로 이어지다. to는 전치사.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="sub-title">[ Yubin — Kim Sang-jin ]</p>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">38</span><span class="s-eng">As someone who loves animation, my role model has always been Kim Sang-jin.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">As someone who loves animation, <span class="slash">/</span> my role model has always been Kim Sang-jin.</div>
+      <div class="korean-trans">애니메이션을 좋아하는 사람으로서, 내 롤 모델은 항상 김상진이었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">주격 관계대명사</span> someone who loves animation: 선행사 someone을 수식.</li>
+        <li><span class="g-tag">현재완료</span> has always been: 과거부터 현재까지 지속되어 온 상태(계속 용법). always와 함께 강조.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">39</span><span class="s-eng">He was the first Korean animator to work for Walt Disney Animation Studios.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">He was the first Korean animator <span class="slash">/</span> to work for Walt Disney Animation Studios.</div>
+      <div class="korean-trans">그는 월트 디즈니 애니메이션 스튜디오에서 일한 최초의 한국인 애니메이터였다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">형용사적 to부정사</span> to work for Disney: the first … animator를 수식. 서수/최상급 뒤 to부정사는 관계절 의미.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">40</span><span class="s-eng">Beyond the fact that he worked for a world-famous company, I admire him for pursuing his dream despite the difficulties he faced.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Beyond the fact that he worked for a world-famous company, <span class="slash">/</span> I admire him <span class="slash">/</span> for pursuing his dream <span class="slash">/</span> despite the difficulties he faced.</div>
+      <div class="korean-trans">그가 세계적으로 유명한 회사에서 일했다는 사실을 넘어서, 나는 그가 직면한 어려움에도 불구하고 꿈을 추구한 것에 대해 그를 존경한다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">동격 that절</span> the fact that ~: 명사 fact의 내용을 설명하는 동격절.</li>
+        <li><span class="g-tag">admire A for B</span> admire him for pursuing: A를 B의 이유로 존경하다.</li>
+        <li><span class="g-tag">전치사</span> despite: ~에도 불구하고(= in spite of). 뒤에 명사(구).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">41</span><span class="s-eng">From a young age, Kim was enthusiastic about drawing.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">From a young age, <span class="slash">/</span> Kim was enthusiastic about drawing.</div>
+      <div class="korean-trans">어릴 때부터, 김상진은 그림 그리기에 열정적이었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">enthusiastic about</span> enthusiastic about drawing: ~에 열정적인. about 뒤 동명사.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">42</span><span class="s-eng">However, his dream of studying art in college was disrupted when he was diagnosed with color vision deficiency during high school.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">However, his dream of studying art in college <span class="slash">/</span> was disrupted <span class="slash">/</span> when he was diagnosed with color vision deficiency <span class="slash">/</span> during high school.</div>
+      <div class="korean-trans">그러나 대학에서 미술을 공부하려는 그의 꿈은 고등학교 때 색약 진단을 받으면서 무너졌다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">수동태</span> was disrupted: 주어(dream)가 행위를 당하는 수동 형태.</li>
+        <li><span class="g-tag">be diagnosed with</span> diagnosed with color vision deficiency: ~로 진단받다. 전치사 with에 주의.</li>
+        <li><span class="g-tag">전치사+동명사</span> his dream of studying art: 명사 dream을 수식하는 of -ing.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">43</span><span class="s-eng">Surprisingly, he didn't allow this misfortune to discourage him.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Surprisingly, <span class="slash">/</span> he didn't allow this misfortune <span class="slash">/</span> to discourage him.</div>
+      <div class="korean-trans">놀랍게도, 그는 이 불행이 자신을 낙담시키도록 내버려두지 않았다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">5형식(allow)</span> allow + O + to-V: O가 ~하도록 허용하다. 부정형 → O가 ~하지 못하게 하다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">44</span><span class="s-eng">Instead, he simply viewed his condition as a minor issue that could happen to anyone.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Instead, <span class="slash">/</span> he simply viewed his condition <span class="slash">/</span> as a minor issue <span class="slash">/</span> that could happen to anyone.</div>
+      <div class="korean-trans">대신, 그는 자신의 상태를 누구에게나 일어날 수 있는 사소한 문제로 단순히 바라보았다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">5형식(view)</span> view A as B: A를 B로 간주하다(= regard A as B).</li>
+        <li><span class="g-tag">주격 관계대명사</span> that could happen to anyone: 선행사 issue를 수식.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">45</span><span class="s-eng">Although he graduated with a degree in economics, he searched for a job related to art that wouldn't involve working with colors.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Although he graduated with a degree in economics, <span class="slash">/</span> he searched for a job related to art <span class="slash">/</span> that wouldn't involve working with colors.</div>
+      <div class="korean-trans">경제학 학위를 취득하며 졸업했지만, 그는 색깔을 다루지 않는 미술 관련 직업을 찾았다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">양보 접속사</span> Although: ~임에도 불구하고.</li>
+        <li><span class="g-tag">후치수식(과거분사)</span> a job related to art: 명사 job을 수식하는 과거분사구.</li>
+        <li><span class="g-tag">주격 관계대명사</span> that wouldn't involve working: 선행사 job을 수식. involve -ing: ~하는 것을 수반하다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">46</span><span class="s-eng">He found out that some animators work only in pencil, so he sent his portfolio to all the animation studios in Korea.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">He found out <span class="slash">/</span> that some animators work only in pencil, <span class="slash">/</span> so he sent his portfolio <span class="slash">/</span> to all the animation studios in Korea.</div>
+      <div class="korean-trans">그는 일부 애니메이터들이 연필만으로 작업한다는 것을 알아냈고, 그래서 한국의 모든 애니메이션 스튜디오에 자신의 포트폴리오를 보냈다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">구동사</span> find out: ~을 알아내다, 발견하다.</li>
+        <li><span class="g-tag">that절(목적어)</span> found out that ~: find out의 목적어절.</li>
+        <li><span class="g-tag">등위접속사</span> so: 결과를 나타내는 등위접속사(그래서).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">47</span><span class="s-eng">One of them gave him an opportunity, and he was finally able to start his career.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">One of them gave him an opportunity, <span class="slash">/</span> and he was finally able to start his career.</div>
+      <div class="korean-trans">그 중 한 곳이 그에게 기회를 주었고, 그는 마침내 커리어를 시작할 수 있었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">4형식</span> gave him an opportunity: give + IO + DO (4형식). IO = him, DO = an opportunity.</li>
+        <li><span class="g-tag">be able to-V</span> was able to start: ~할 수 있었다(= could). 과거 가능.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">48</span><span class="s-eng">It was his hard work and talent that eventually led him to a position at Disney at the age of 37.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">It was his hard work and talent <span class="slash">/</span> that eventually led him <span class="slash">/</span> to a position at Disney <span class="slash">/</span> at the age of 37.</div>
+      <div class="korean-trans">결국 그를 37세에 디즈니의 자리로 이끈 것은 바로 그의 노력과 재능이었다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">It~that 강조구문</span> It was his hard work and talent that ~: 주어(his hard work and talent)를 강조.</li>
+        <li><span class="g-tag">lead A to B</span> led him to a position: A를 B로 이끌다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">49</span><span class="s-eng">I give him a lot of credit for his persistence and his attitude toward the challenges in his life.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">I give him a lot of credit <span class="slash">/</span> for his persistence <span class="slash">/</span> and his attitude toward the challenges in his life.</div>
+      <div class="korean-trans">나는 삶의 도전에 대한 그의 끈기와 태도에 대해 그를 매우 높이 평가한다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">관용표현</span> give credit for: ~에 대해 공을 인정하다, 높이 평가하다.</li>
+        <li><span class="g-tag">병렬구조</span> his persistence and his attitude: 전치사 for의 목적어 두 명사가 and로 병렬.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">50</span><span class="s-eng">I'll never give up on my dreams.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">I'll never give up on my dreams.</div>
+      <div class="korean-trans">나는 절대 내 꿈을 포기하지 않을 것이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">구동사</span> give up on: ~을 포기하다. give up과 유사하나 on이 붙으면 「(사람·꿈 등을) 단념하다」의 뉘앙스.</li>
+        <li><span class="g-tag">부사 강조</span> never: 강한 부정. will never = 절대 ~하지 않을 것이다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">51</span><span class="s-eng">If I encounter difficulties, I will simply find another way to pursue them, just as he did.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">If I encounter difficulties, <span class="slash">/</span> I will simply find another way <span class="slash">/</span> to pursue them, <span class="slash">/</span> just as he did.</div>
+      <div class="korean-trans">어려움에 맞닥뜨리면, 그가 했던 것처럼 나도 그것들을 추구하는 또 다른 방법을 찾을 것이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">조건절(직설법)</span> If I encounter difficulties: 실현 가능한 조건. 현재시제 사용.</li>
+        <li><span class="g-tag">형용사적 to부정사</span> another way to pursue them: way를 수식하는 to부정사.</li>
+        <li><span class="g-tag">비교 접속사</span> just as he did: 「그가 했던 것처럼」. as는 양태를 나타내는 접속사. did = found another way.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="sub-title">[ 마무리 ]</p>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">52</span><span class="s-eng">These stories shared by our readers emphasize the importance of role models in guiding teenagers toward their career goals.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">These stories shared by our readers <span class="slash">/</span> emphasize the importance of role models <span class="slash">/</span> in guiding teenagers toward their career goals.</div>
+      <div class="korean-trans">독자들이 공유한 이 이야기들은 십대들을 진로 목표 방향으로 이끄는 데 있어 롤 모델의 중요성을 강조한다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">후치수식(과거분사)</span> stories shared by our readers: 명사 stories를 수식하는 과거분사구(수동).</li>
+        <li><span class="g-tag">전치사+동명사</span> in guiding teenagers: 전치사 in의 목적어로 동명사구(역할·방면을 나타냄).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">53</span><span class="s-eng">Role models, regardless of their field, inspire us because they possess qualities like persistence, commitment, and optimism.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Role models, regardless of their field, <span class="slash">/</span> inspire us <span class="slash">/</span> because they possess qualities <span class="slash">/</span> like persistence, commitment, and optimism.</div>
+      <div class="korean-trans">롤 모델들은 분야에 상관없이, 끈기·헌신·낙관주의와 같은 자질을 갖추고 있기 때문에 우리에게 영감을 준다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">삽입어구</span> regardless of their field: 주어와 동사 사이 삽입된 전치사구. 문장 구조에 영향 없음.</li>
+        <li><span class="g-tag">열거</span> persistence, commitment, and optimism: A, B, and C 형식의 3항 병렬 열거.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">54</span><span class="s-eng">If you haven't found a role model yet, perhaps it's time to start searching for one.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">If you haven't found a role model yet, <span class="slash">/</span> perhaps it's time <span class="slash">/</span> to start searching for one.</div>
+      <div class="korean-trans">아직 롤 모델을 찾지 못했다면, 아마도 지금이 하나를 찾기 시작할 때일 것이다.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">현재완료(부정)</span> haven't found yet: 아직 ~하지 않았다(미완료). yet은 부정문에서 「아직」.</li>
+        <li><span class="g-tag">It's time to-V</span> it's time to start: ~할 때이다. 관용 표현.</li>
+        <li><span class="g-tag">start -ing</span> start searching: start는 동명사·to부정사 모두 가능. 의미 차이 없음.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sentence-card">
+    <div class="sentence-header"><span class="s-num">55</span><span class="s-eng">Try to find someone who can encourage you to take the first step in your career exploration.</span></div>
+    <div class="sentence-body">
+      <div class="slash-reading">Try to find someone <span class="slash">/</span> who can encourage you <span class="slash">/</span> to take the first step <span class="slash">/</span> in your career exploration.</div>
+      <div class="korean-trans">진로 탐색에서 첫 걸음을 내딛도록 여러분을 격려해 줄 수 있는 누군가를 찾아보세요.</div>
+      <ul class="grammar-list">
+        <li><span class="g-tag">명령문</span> Try to find: 동사원형으로 시작하는 명령문(권고·조언).</li>
+        <li><span class="g-tag">주격 관계대명사</span> someone who can encourage you: 선행사 someone을 수식.</li>
+        <li><span class="g-tag">5형식(encourage)</span> encourage + O + to-V: O가 ~하도록 격려하다.</li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- ③ 핵심단어·표현 -->
+<section id="핵심단어" class="section">
+  <h2 class="section-title">핵심단어·표현 (Key Vocabulary & Expressions)</h2>
+  <div class="vocab-grid">
+    <div class="vocab-card">
+      <span class="vocab-word">map out</span><span class="vocab-pos">phr.v.</span>
+      <div class="vocab-meaning">~을 계획하다, 구체적으로 구상하다</div>
+      <div class="vocab-example">She mapped out her career path carefully.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">demanding</span><span class="vocab-pos">adj.</span>
+      <div class="vocab-meaning">힘든, 요구가 많은, 부담스러운</div>
+      <div class="vocab-example">Teaching can be a very demanding job.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">profound</span><span class="vocab-pos">adj.</span>
+      <div class="vocab-meaning">심오한, 깊은, 엄청난</div>
+      <div class="vocab-example">The book had a profound impact on her thinking.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">dedicate A to B</span><span class="vocab-pos">v.phr.</span>
+      <div class="vocab-meaning">A를 B에 헌신하다, 바치다</div>
+      <div class="vocab-example">He dedicated his life to helping others.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">intrigued</span><span class="vocab-pos">adj.</span>
+      <div class="vocab-meaning">매우 흥미로워하는, 호기심이 생긴</div>
+      <div class="vocab-example">She was intrigued by the strange phenomenon.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">insufficient</span><span class="vocab-pos">adj.</span>
+      <div class="vocab-meaning">불충분한, 부족한</div>
+      <div class="vocab-example">The available resources were insufficient for the project.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">perception</span><span class="vocab-pos">n.</span>
+      <div class="vocab-meaning">인식, 지각, 인식 방식</div>
+      <div class="vocab-example">The film changed public perceptions of the ocean.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">marine conservation</span><span class="vocab-pos">n.phr.</span>
+      <div class="vocab-meaning">해양 보존</div>
+      <div class="vocab-example">He dedicated his work to marine conservation.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">notable</span><span class="vocab-pos">adj.</span>
+      <div class="vocab-meaning">주목할 만한, 저명한</div>
+      <div class="vocab-example">She was a notable figure in 20th-century science.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">devotion</span><span class="vocab-pos">n.</span>
+      <div class="vocab-meaning">헌신, 전념</div>
+      <div class="vocab-example">Her devotion to the field earned her great respect.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">prevent A from -ing</span><span class="vocab-pos">v.phr.</span>
+      <div class="vocab-meaning">A가 ~하지 못하게 막다</div>
+      <div class="vocab-example">Rain prevented us from going out.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">accumulate</span><span class="vocab-pos">v.</span>
+      <div class="vocab-meaning">축적하다, 쌓다</div>
+      <div class="vocab-example">She accumulated extensive knowledge over the years.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">curator</span><span class="vocab-pos">n.</span>
+      <div class="vocab-meaning">큐레이터, (박물관·동물원의) 관리자</div>
+      <div class="vocab-example">She became the first female curator at the zoo.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">incorporate</span><span class="vocab-pos">v.</span>
+      <div class="vocab-meaning">통합하다, 포함시키다, 도입하다</div>
+      <div class="vocab-example">The design incorporated the latest technology.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">be diagnosed with</span><span class="vocab-pos">v.phr.</span>
+      <div class="vocab-meaning">~로 진단받다</div>
+      <div class="vocab-example">He was diagnosed with color vision deficiency.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">persistence</span><span class="vocab-pos">n.</span>
+      <div class="vocab-meaning">끈기, 인내, 지속성</div>
+      <div class="vocab-example">Her persistence eventually led to success.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">give credit for</span><span class="vocab-pos">idiom</span>
+      <div class="vocab-meaning">~에 대해 인정하다, 공을 돌리다</div>
+      <div class="vocab-example">I give him a lot of credit for his bravery.</div>
+    </div>
+    <div class="vocab-card">
+      <span class="vocab-word">regardless of</span><span class="vocab-pos">prep.</span>
+      <div class="vocab-meaning">~에 상관없이, ~을 막론하고</div>
+      <div class="vocab-example">Everyone is welcome, regardless of age.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ④ 내용·주제·요지 -->
+<section id="주제" class="section">
+  <h2 class="section-title">내용·주제·요지 (Content & Theme)</h2>
+
+  <div class="info-box">
+    <div class="label">글의 종류</div>
+    <div class="value">인터뷰·수기 모음 (Magazine Article) — 세 명의 학생이 각자의 롤 모델을 소개하는 잡지 기사 형식</div>
+  </div>
+  <div class="info-box">
+    <div class="label">전체 주제 (Topic)</div>
+    <div class="value">롤 모델이 청소년의 진로 목표 형성에 미치는 깊은 영향</div>
+  </div>
+  <div class="info-box">
+    <div class="label">전체 요지 (Main Idea)</div>
+    <div class="value">롤 모델은 끈기·헌신·낙관주의 같은 자질을 통해 청소년들이 진로를 탐색하고 목표를 설정하는 데 큰 영감을 준다.</div>
+  </div>
+
+  <div class="info-box">
+    <div class="label">세 롤 모델 비교</div>
+    <div class="value">
+      <div class="person-grid">
+        <div class="person-card">
+          <div class="pname">🌊 Jacques Cousteau</div>
+          <div class="pdetail">프랑스 해양탐험가·발명가<br>팔 골절 → 수영 치료 → 해양 탐구<br>Aqua-Lung 개발, 다큐멘터리 제작<br>핵심 자질: <strong>호기심 + 열정</strong></div>
+        </div>
+        <div class="person-card">
+          <div class="pname">🦎 Joan Procter</div>
+          <div class="pdetail">영국 동물학자·파충류 전문가<br>건강 문제 → 독학 → 대영박물관 조수<br>런던 동물원 최초 여성 파충류 큐레이터<br>핵심 자질: <strong>열정 + 헌신</strong></div>
+        </div>
+        <div class="person-card">
+          <div class="pname">🎨 Kim Sang-jin</div>
+          <div class="pdetail">한국인 최초 월트 디즈니 애니메이터<br>색약 진단 → 연필 애니메이션으로 전환<br>37세에 디즈니 입사<br>핵심 자질: <strong>끈기 + 긍정적 태도</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <div class="label">글의 구조 흐름</div>
+    <div class="value">
+      <div class="flow-steps">
+        <div class="flow-step"><span class="flow-arrow">①</span> 도입: 진로 선택의 어려움 → 롤 모델의 필요성 제시</div>
+        <div class="flow-step"><span class="flow-arrow">②</span> Minji: Cousteau의 역경 극복(사고→장비 발명→다큐) + 영향(경계 도전, 탐험)</div>
+        <div class="flow-step"><span class="flow-arrow">③</span> Sunho: Procter의 헌신(건강 문제→독학→큐레이터) + 영향(진정한 관심 분야 탐색)</div>
+        <div class="flow-step"><span class="flow-arrow">④</span> Yubin: 김상진의 긍정적 전환(색약→연필 애니→Disney) + 영향(포기 않고 다른 길 모색)</div>
+        <div class="flow-step"><span class="flow-arrow">⑤</span> 결론: 롤 모델의 공통 자질(끈기·헌신·낙관주의) + 롤 모델 찾기 권고</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <div class="label">핵심 주제문 (Key Sentences)</div>
+    <div class="value">
+      <p style="margin-bottom:0.6rem;">▶ <em>"This is where role models can be useful."</em></p>
+      <p style="margin-bottom:0.6rem;">▶ <em>"Role models, regardless of their field, inspire us because they possess qualities like persistence, commitment, and optimism."</em></p>
+      <p>▶ <em>"Try to find someone who can encourage you to take the first step in your career exploration."</em></p>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <div class="label">세 학생의 공통 결론 구조</div>
+    <div class="value">
+      세 학생 모두 <strong>롤 모델 소개 → 역경 극복 과정 서술 → 자신에게 미친 영향 + 미래 다짐</strong>의 구조를 동일하게 따른다.
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 변형문제 (객관식) -->
+<section id="퀴즈" class="section">
+  <h2 class="section-title">변형문제 — 객관식 (Interactive Quiz)</h2>
+
+  <!-- Q1 주제추론 -->
+  <div class="quiz-card" id="q1">
+    <div class="quiz-q"><span class="q-type">주제추론</span> 1. 이 글의 주제로 가장 적절한 것은?</div>
+    <ul class="options">
+      <li><button class="option-btn" onclick="checkAnswer(this,'q1',false)">① 세계적으로 유명한 인물들의 성공 비결</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q1',false)">② 청소년기에 진로를 일찍 결정해야 하는 이유</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q1',true)">③ 롤 모델이 청소년의 진로 목표 형성에 미치는 영향</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q1',false)">④ 과학·예술 분야의 위대한 발명품 소개</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q1',false)">⑤ 역경을 극복한 위인들의 삶에서 배우는 교훈</button></li>
+    </ul>
+    <div class="quiz-explanation" id="exp-q1">글은 도입에서 "the profound impact role models can have when it comes to shaping career goals"라고 명시하고, 세 학생이 각자의 롤 모델이 진로 목표에 미친 영향을 서술합니다. ⑤는 역경 극복에 초점이 맞춰져 있어 진로 목표라는 핵심이 빠져 있습니다.</div>
+    <button class="reset-btn" onclick="resetQuiz('q1')">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q2 빈칸추론 -->
+  <div class="quiz-card" id="q2">
+    <div class="quiz-q"><span class="q-type">빈칸추론</span> 2. 다음 빈칸에 들어갈 말로 가장 적절한 것은?<br><br><em style="font-family:'EB Garamond',serif;font-size:1rem;">"Role models, regardless of their field, inspire us because they possess qualities like __________, commitment, and optimism."</em></div>
+    <ul class="options">
+      <li><button class="option-btn" onclick="checkAnswer(this,'q2',false)">① creativity</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q2',false)">② intelligence</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q2',true)">③ persistence</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q2',false)">④ popularity</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q2',false)">⑤ wealth</button></li>
+    </ul>
+    <div class="quiz-explanation" id="exp-q2">결론부에 "qualities like persistence, commitment, and optimism"이 직접 언급됩니다. 세 롤 모델 모두 역경에도 포기하지 않는 '끈기(persistence)'를 공통으로 보여주고 있습니다.</div>
+    <button class="reset-btn" onclick="resetQuiz('q2')">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q3 어법오류 -->
+  <div class="quiz-card" id="q3">
+    <div class="quiz-q"><span class="q-type">어법오류</span> 3. 다음 문장에서 어법상 틀린 부분을 찾아 고친 것으로 옳은 것은?<br><br><em style="font-family:'EB Garamond',serif;font-size:1rem;">"Health problems prevented her to attend university, but her passion kept her to move forward."</em></div>
+    <ul class="options">
+      <li><button class="option-btn" onclick="checkAnswer(this,'q3',false)">① prevented → was prevented</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q3',true)">② to attend → from attending</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q3',false)">③ her passion → she passion</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q3',false)">④ kept → has kept</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q3',false)">⑤ to move → moved</button></li>
+    </ul>
+    <div class="quiz-explanation" id="exp-q3">prevent A from -ing 구문에서 from -ing는 필수입니다. "prevent A to-V"는 틀린 형태입니다. (keep + O + -ing도 오류가 있으나, 두 오류 중 가장 핵심적인 것은 prevent 구문입니다. 정답: to attend → from attending)</div>
+    <button class="reset-btn" onclick="resetQuiz('q3')">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q4 내용불일치 -->
+  <div class="quiz-card" id="q4">
+    <div class="quiz-q"><span class="q-type">내용불일치</span> 4. 글의 내용과 일치하지 않는 것은?</div>
+    <ul class="options">
+      <li><button class="option-btn" onclick="checkAnswer(this,'q4',false)">① Cousteau는 끔찍한 자동차 사고로 두 팔을 다쳤다.</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q4',false)">② Joan Procter는 런던 동물원 최초의 여성 파충류 큐레이터가 되었다.</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q4',true)">③ 김상진은 경제학 대신 미술 학위를 취득한 후 애니메이션 스튜디오에 지원했다.</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q4',false)">④ Cousteau의 1956년 다큐멘터리는 사람들의 바다에 대한 인식을 변화시켰다.</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q4',false)">⑤ Joan Procter는 대학에 다니지 못했지만 스스로 동물학 공부를 이어갔다.</button></li>
+    </ul>
+    <div class="quiz-explanation" id="exp-q4">③은 틀렸습니다. 지문에서 "Although he graduated with a degree in economics"라고 명시되어 있습니다. 김상진은 미술이 아닌 경제학 학위를 취득했습니다.</div>
+    <button class="reset-btn" onclick="resetQuiz('q4')">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q5 글의 순서 -->
+  <div class="quiz-card" id="q5">
+    <div class="quiz-q"><span class="q-type">글의 순서</span> 5. Sunho의 이야기에서 주어진 문장 다음에 이어질 글의 순서로 가장 적절한 것은?<br><br><em style="font-family:'EB Garamond',serif;font-size:1rem;">[주어진 문장] Procter accumulated extensive knowledge of zoology.</em><br><br>(A) A few years later, she became the first female curator of reptiles at the London Zoo.<br>(B) She began exchanging letters with George Boulenger, a prominent expert on reptiles, in order to share ideas.<br>(C) He was so impressed that he hired her as his assistant at the British Museum.</div>
+    <ul class="options">
+      <li><button class="option-btn" onclick="checkAnswer(this,'q5',false)">① (A)-(B)-(C)</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q5',false)">② (A)-(C)-(B)</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q5',false)">③ (C)-(A)-(B)</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q5',true)">④ (B)-(C)-(A)</button></li>
+      <li><button class="option-btn" onclick="checkAnswer(this,'q5',false)">⑤ (C)-(B)-(A)</button></li>
+    </ul>
+    <div class="quiz-explanation" id="exp-q5">지식 축적 → (B) Boulenger에게 편지 교환 → (C) 감명 받아 조수로 고용(He = Boulenger) → (A) 이후 런던 동물원 큐레이터가 됨. 시간 흐름상 B→C→A가 자연스럽습니다.</div>
+    <button class="reset-btn" onclick="resetQuiz('q5')">↺ 다시 풀기</button>
+  </div>
+
+</section>
+
+<!-- ⑥ 서술형·영작 -->
+<section id="서술형" class="section">
+  <h2 class="section-title">서술형·영작 (Descriptive & Writing)</h2>
+
+  <div class="descriptive-card">
+    <div class="desc-q">1. [빈칸 요약] 다음은 이 글의 핵심 내용을 요약한 것이다. (A)와 (B)에 들어갈 말을 지문에서 찾아 쓰시오.</div>
+    <div class="desc-condition">조건: 각각 한 단어로, 지문에 나온 표현 그대로 쓸 것</div>
+    <p style="font-family:'EB Garamond',serif; font-size:1rem; line-height:1.8; background:var(--gray); padding:0.8rem 1rem; border-radius:6px; margin-bottom:1rem;">
+      Role models can have a (A)__________ impact on shaping career goals. They inspire young people by showing qualities like (B)__________, commitment, and optimism even in the face of difficulties.
+    </p>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">▶ 모범답안 보기</button>
+    <div class="model-answer">
+      <strong>(A) profound</strong> — "the profound impact role models can have"에서 직접 가져옴.<br>
+      <strong>(B) persistence</strong> — "qualities like persistence, commitment, and optimism"에서 직접 가져옴.
+    </div>
+  </div>
+
+  <div class="descriptive-card">
+    <div class="desc-q">2. [내용 서술] 김상진이 색약 진단을 받은 후 어떻게 진로를 개척했는지 두 가지 구체적 행동을 우리말로 서술하시오.</div>
+    <div class="desc-condition">조건: ① 두 가지 행동을 각각 한 문장으로 쓸 것 ② 지문의 내용에 근거할 것</div>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">▶ 모범답안 보기</button>
+    <div class="model-answer">
+      ① 색을 쓰지 않는 연필만으로 작업하는 애니메이터가 있다는 것을 알고, 한국의 모든 애니메이션 스튜디오에 자신의 포트폴리오를 보냈다.<br>
+      ② 한 스튜디오에서 기회를 얻어 커리어를 시작했고, 결국 37세에 디즈니에 입사했다.
+    </div>
+  </div>
+
+  <div class="descriptive-card">
+    <div class="desc-q">3. [영작] 다음 우리말을 조건에 맞게 영작하시오.<br><br><strong>"건강 문제가 그녀가 대학에 다니는 것을 막았지만, 그녀의 열정은 그녀를 계속 앞으로 나아가게 했다."</strong></div>
+    <div class="desc-condition">조건: ① prevent A from -ing를 사용할 것 ② keep + O + -ing 구문을 사용할 것 ③ 두 절을 but으로 연결할 것</div>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">▶ 모범답안 보기</button>
+    <div class="model-answer">
+      <strong>Health problems prevented her from attending university, but her passion kept her moving forward.</strong>
+    </div>
+  </div>
+
+  <div class="descriptive-card">
+    <div class="desc-q">4. [어법 교정] 다음 문장의 밑줄 친 부분 중 어법상 틀린 것을 찾아 번호를 쓰고 올바르게 고쳐 쓰시오.<br><br><em style="font-family:'EB Garamond',serif; font-size:1rem;">It ①was his hard work and talent ②which eventually ③led him ④to a position at Disney ⑤at the age of 37.</em></div>
+    <div class="desc-condition">조건: 번호와 함께 틀린 표현 → 올바른 표현 형식으로 쓸 것</div>
+    <button class="answer-toggle-btn" onclick="toggleAnswer(this)">▶ 모범답안 보기</button>
+    <div class="model-answer">
+      <strong>② which → that</strong><br><br>
+      It ~ that 강조구문에서는 반드시 that을 사용합니다. which는 강조구문에 쓸 수 없습니다.<br>
+      원문: "It was his hard work and talent <u>that</u> eventually led him to a position at Disney."
+    </div>
+  </div>
+
+</section>
+</main>
+
+<footer class="app-footer">
+  © 에듀케레 Educare · 고2 내신 영어 분석지 · Who Is Your Role Model?
+</footer>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if(b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active');
+  });
+}
+function checkAnswer(btn, qId, isCorrect) {
+  const card = document.getElementById(qId);
+  const btns = card.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  if(isCorrect) {
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    btns.forEach(b => { if(b.getAttribute('onclick').includes('true')) b.classList.add('revealed'); });
+  }
+  document.getElementById('exp-' + qId).style.display = 'block';
+}
+function resetQuiz(qId) {
+  const card = document.getElementById(qId);
+  card.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('correct','wrong','revealed');
+  });
+  document.getElementById('exp-' + qId).style.display = 'none';
+}
+function toggleAnswer(btn) {
+  const answer = btn.nextElementSibling;
+  if(answer.style.display === 'block') {
+    answer.style.display = 'none';
+    btn.textContent = '▶ 모범답안 보기';
+  } else {
+    answer.style.display = 'block';
+    btn.textContent = '▼ 모범답안 닫기';
+  }
+}
+</script>
+</body>
+</html>
